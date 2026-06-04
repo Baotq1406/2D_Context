@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center; /* căn giữa ngang */
+            align-items: center;     /* căn giữa dọc */
+        }
+
+        canvas {
+            border: 2px solid lightgrey;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg
+            width="210"
+            height="297"
+            viewBox="0 0 210 297"
+            id="svg1">
+
+        <path
+                style="fill:#ef5e5e;"
+                d="M 104.22331,133.37668
+                   C -1.5072094,-35.219492 103.13006,33.890796 103.13006,33.890796
+                   c 0,0 101.73939,-69.935966 1.09325,99.485884 z" />
+        </svg>
+    <canvas id="canvas" width="750" height="400" style="border:2px solid lightgrey;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    </div>
+</body>
+<script>
+    "use strict";
+    let canvas;
+    let context;
+
+    window.onload = init;
+
+    function init(){
+        // Get a reference to the canvas
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext('2d');
+
+        draw();
+    }
+
+    function draw() {
+        let path = new Path2D('M 104.22331,133.37668 C -1.5072094,-35.219492 103.13006,33.890796 103.13006,33.890796 c 0,0 101.73939,-69.935966 1.09325,99.485884 z');
+
+        context.beginPath();
+        context.strokeStyle = '#0099b0';
+        context.fillStyle = '#ff8080';
+        context.stroke(path);
+        context.fill(path);
+    }
+</script>
+</html>

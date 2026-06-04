@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center; /* căn giữa ngang */
+            align-items: center;     /* căn giữa dọc */
+        }
+
+        canvas {
+            border: 2px solid lightgrey;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="750" height="400" style="border:2px solid lightgrey;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+</body>
+<script>
+    "use strict";
+    let canvas;
+    let context;
+
+    window.onload = init;
+
+    function init(){
+        // Get a reference to the canvas
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext('2d');
+
+        draw();
+    }
+
+    function draw() {
+        // Get a random color, red or blue
+        let randomColor = Math.random() > 0.5? '#ff8080' : '#0099b0';
+
+        context.fillStyle = randomColor;
+        
+        context.beginPath();
+        context.arc(200, 100, 50, 0, 2 * Math.PI);
+        context.strokeStyle = '#0099b0';
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(200, 100);
+        context.lineTo(250, 150);
+        context.lineTo(250, 50);
+        context.stroke();
+
+        context.strokeStyle = '#ff8080';
+        context.strokeRect(100, 50, 100, 125);
+
+        //circle fill
+        context.beginPath();
+        context.arc(150, 250, 50, 0, 2 * Math.PI);
+        context.fillStyle = "#06AED5";
+        context.fill();
+
+        //Circle 2 Stroke
+        context.beginPath();
+        context.arc(350, 250, 50, 0, 2 * Math.PI);
+        context.strokeStyle = "#F0C808";
+        context.lineWidth = 5;
+        context.stroke();
+
+        //Circle 3 fill and stroke
+        context.beginPath();
+        context.arc(550, 250, 50, 0, 2 * Math.PI);
+        context.fillStyle = "#06AED5";
+        context.fill();
+
+        context.strokeStyle = "#F0C808";
+        context.lineWidth = 5;
+        context.stroke();
+    }
+</script>
+</html>
