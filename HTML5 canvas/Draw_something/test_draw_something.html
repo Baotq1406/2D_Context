@@ -74,8 +74,12 @@
         // context.fill();
 
         //3/4 hình tròn, nhớ nhớ vẽ đúng cần có tâm hẹ hẹ 
-        context.moveTo(380, 100);      // tâm
-        context.arc(380, 100, 50, 0, 1.5 * Math.PI);
+        //context.moveTo(380, 100);      // tâm
+        // context.arc(380, 100, 50, 0, 1.5 * Math.PI);
+        // context.closePath();
+        // context.fill();
+
+        context.arc(380, 100, 50, 4 * Math.PI, Math.PI);
         context.closePath();
         context.fill();
 

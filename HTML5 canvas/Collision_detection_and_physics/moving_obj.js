@@ -1,1 +1,0 @@
-console.log("Collision_detection_and_physics test.");

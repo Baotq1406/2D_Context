@@ -1,6 +1,8 @@
 console.log("Canvas animation test");
 
 "use strict";
+let canvas;
+let context;
 
 let secondsPassed = 0; // dẹt sơ, this is delta time.
 let oldTimeStamp = 0;
@@ -12,8 +14,7 @@ let fpsTimer = 0; // Tính thời gian để làm chậm việc cập nhật s�
 
 let rectX = 0;
 let rectY = 0;
-let canvas;
-let context;
+
 
 window.onload = init;
 

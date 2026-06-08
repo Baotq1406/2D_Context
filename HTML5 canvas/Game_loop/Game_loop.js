@@ -30,6 +30,7 @@ let context;
 let lastTime = 0;
 let fps = 0;
 
+
 window.onload = init;
 
 function init() {
