@@ -54,9 +54,10 @@ class GameObject
 
 class Circle extends GameObject
 {
-    constructor (context, x, y, vx, vy, radius){
+    constructor (context, x, y, vx, vy, radius, mass){
         super(context, x, y, vx, vy);
-        this.radius = 30;
+        this.radius = radius;
+        this.mass = mass;
     }
 
     draw(){
@@ -79,10 +80,15 @@ function createWorld()
     // gameObjects.push(circle1);
     // gameObjects.push(circle2);
 
-    const randomCircles = Math.floor(Math.random() * 18) + 2;
-    for (let i = 0; i < randomCircles; i++) {
-        spawnCircle();
+    //const randomCircles = Math.floor(Math.random() * 18) + 2;
+    const randomCircles = Math.floor(Math.random() * 20) + 10;
+    for (let i = 0; i < 2; i++) {
+        spawnCircle(30, 10);
     } 
+
+    for (let i = 0; i < randomCircles; i++) {
+        spawnCircle(15, 1);
+    }
 }
 
 function clearCanvas()
@@ -90,11 +96,10 @@ function clearCanvas()
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function spawnCircle()
+function spawnCircle(radius, mass)
 {
     let validPosition = false;
     let x, y;
-    //let radius = 30;
 
     while (!validPosition) {
         x = Math.random() * canvas.width;
@@ -122,7 +127,7 @@ function spawnCircle()
     let vy = (Math.random() * 200) - 100; // Velocity between -100 and 100
 
     //gameObjects.push(new Circle(context, x, y, 0, 0, radius));
-    gameObjects.push(new Circle(context, x, y, vx, vy));
+    gameObjects.push(new Circle(context, x, y, vx, vy, radius, mass));
 }
 
 function detectCollision() 
@@ -143,6 +148,7 @@ function detectCollision()
             if (circleIntersect(obj1.x, obj1.y, obj1.radius, obj2.x, obj2.y, obj2.radius)) {
                 obj1.isColliding = true;
                 obj2.isColliding = true;
+                respondToCollision(obj1, obj2);
             }
         }
     }
@@ -155,4 +161,44 @@ function circleIntersect(x1, y1, r1, x2, y2, r2) {
     // When the distance is smaller or equal to the sum
     // of the two radius, the circles touch or overlap
     return squareDistance <= ((r1 + r2) * (r1 + r2));
+}
+
+// respond to collision by changing the velocity of the circles
+function respondToCollision(obj1, obj2) 
+{
+    // Calculate the normal vector of the collision
+    let vCollision = { 
+        x: obj2.x - obj1.x, 
+        y: obj2.y - obj1.y
+    };
+
+    // Calculate the distance between the two circles
+    let distance = Math.sqrt((obj2.x-obj1.x)*(obj2.x-obj1.x) + (obj2.y-obj1.y)*(obj2.y-obj1.y));
+
+    // Normalize the collision vector
+    let vCollisionNorm = {
+        x: vCollision.x / distance, 
+        y: vCollision.y / distance
+    };
+
+    // Calculate the relative velocity of the two circles
+    let vRelativeVelocity = {
+        x: obj1.vx - obj2.vx, 
+        y: obj1.vy - obj2.vy
+    };
+
+    // Calculate the speed of the collision
+    let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
+
+    // obj1.vx -= (speed * vCollisionNorm.x);
+    // obj1.vy -= (speed * vCollisionNorm.y);
+    // obj2.vx += (speed * vCollisionNorm.x);
+    // obj2.vy += (speed * vCollisionNorm.y);
+
+    // Calculate the impulse of the collision
+    let impulse = 2 * speed / (obj1.mass + obj2.mass);
+    obj1.vx -= (impulse * obj2.mass * vCollisionNorm.x);
+    obj1.vy -= (impulse * obj2.mass * vCollisionNorm.y);
+    obj2.vx += (impulse * obj1.mass * vCollisionNorm.x);
+    obj2.vy += (impulse * obj1.mass * vCollisionNorm.y);
 }
