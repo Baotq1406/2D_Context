@@ -24,6 +24,7 @@ function init() {
 function gameLoop(timeStamp)
 {
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    secondsPassed = Math.min(secondsPassed, 0.1);
     oldTimeStamp = timeStamp;
 
     // Loop over all game objects

@@ -23,6 +23,7 @@ function init()
 function gameLoop(timeStamp) 
 {    
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    secondsPassed = Math.min(secondsPassed, 0.1);
     oldTimeStamp = timeStamp;
 
     for (let i = 0; i < gameObjects.length; i++) {
@@ -202,6 +203,11 @@ function respondToCollision(obj1, obj2)
 
     // Calculate the speed of the collision
     let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
+
+    if (speed < 0) {
+       //break;
+       return;
+    }
 
     // obj1.vx -= (speed * vCollisionNorm.x);
     // obj1.vy -= (speed * vCollisionNorm.y);
