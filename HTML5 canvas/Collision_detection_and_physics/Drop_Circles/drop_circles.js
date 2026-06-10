@@ -278,3 +278,19 @@ function detectEdgeCollisions() {
     }
 }
 
+/*
+Một số mẹo giúp cải thiện hiệu năng:
+1. Chỉ so sánh những đối tượng ở đủ gần để có khả năng va chạm.
+2. Giữ danh sách đối tượng (object pool) luôn gọn gàng.
+3. Loại trừ các đối tượng nền hoặc đứng yên.
+4. Sử dụng hitbox.
+5. Điều chỉnh cách triển khai hệ thống vật lý và va chạm cho phù hợp với trò chơi của bạn.
+*/
+
+
+/*
+Xử lý các đối tượng di chuyển quá nhanh
+
+Giải pháp đơn giản nhất: Giới hạn tốc độ
+Giải pháp khác: Kiểm tra va chạm trên quỹ đạo dự kiến
+*/
