@@ -39,6 +39,7 @@ class Game {
 
         this.fallingObjects = [];
         this.obstacles = [];
+        this.star = [];
 
         this.createActors();
         this.listenForPlayerInput();
@@ -113,18 +114,62 @@ class Game {
 
         // TODO: Update falling objects and obstacles.
         // Hint: loop over this.fallingObjects and this.obstacles.
+
         for (let fallingObject of this.fallingObjects) {
             fallingObject.update(secondsPassed);
         }
 
+        for (let obstacle of this.obstacles) {
+            obstacle.update(secondsPassed);
+        }
+
+        for (let star of this.star) {
+            star.update(secondsPassed);
+        }
+
         // TODO: Check if catcher touches a falling object.
         // If yes, increase score and remove that object.
+        this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
+            if (this.detectCollision(this.catcher, fallingObject)) {
+                this.score++;
+                return false; 
+            }
+            return true;
+        });
 
         // TODO: Check if catcher touches an obstacle.
         // If yes, lose a life and remove that obstacle.
+        this.obstacles = this.obstacles.filter((obstacle) => {
+            if (this.detectCollision(this.catcher, obstacle)) {
+                this.lives--;
+                if (this.lives <= 0) {
+                    this.showGameOver();
+                }
+                return false;
+            }
+            return true;
+        });
 
         // TODO: Remove items that leave the screen.
         // If a falling object reaches the bottom, lose a life.
+        // Hint: use the isOffScreen method of the objects.
+        this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
+            if (fallingObject.isOffScreen(this.height)) {
+                this.lives--;
+                if (this.lives <= 0) {
+                    this.showGameOver();
+                }
+                return false;
+            }
+            return true;
+        });
+
+        this.obstacles = this.obstacles.filter((obstacle) => {
+            if (obstacle.isOffScreen(this.height)) {
+                return false;
+            }
+            return true;
+        });
 
         // TODO: If lives is 0, set gameOver and show restart UI.
     }
@@ -146,7 +191,8 @@ class Game {
         let cols = 19;
         let colWidth = this.width / cols;
         let randomCol = Math.floor(Math.random() * cols);
-        let x = randomCol * colWidth + (colWidth - 32) / 2;
+        let xFallingObj = randomCol * colWidth + (colWidth - 32) / 2;
+        let xObstacleObj = randomCol * colWidth + (colWidth - 44) / 2;
 
         //test
         //let x = 18 * colWidth + (colWidth - 32) / 2;
@@ -154,10 +200,15 @@ class Game {
 
         if (shouldSpawnObstacle) {
             // Obstacle example:
-            // this.obstacles.push(new Obstacle(this.context, x, -36, 44, 28, OBSTACLE_SPEED));
+            this.obstacles.push(new Obstacle(this.context, xObstacleObj, -36, 44, 28, OBSTACLE_SPEED));
         } else {
             // Falling object example:
-            this.fallingObjects.push(new FallingObject(this.context, x, -32, 32, FALL_SPEED));       
+            let shouldSpawnStar = Math.random() < 0.5;
+            if (shouldSpawnStar) {
+                this.star.push(new Star(this.context, xFallingObj, -32, 32, FALL_SPEED));
+            } else {
+                this.fallingObjects.push(new FallingObject(this.context, xFallingObj, -32, 32, FALL_SPEED));
+            }
         }
     }
 
@@ -221,5 +272,12 @@ class Game {
         let rect = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / rect.width;
         return (clientX - rect.left) * scaleX;
+    }
+
+    detectCollision(obj1, obj2) {
+        if (obj2.x > obj1.x + obj1.width || obj1.x > obj2.x + obj2.width || obj2.y > obj1.y + obj1.height || obj1.y > obj2.y + obj2.height) {
+            return false;
+        }
+        return true;
     }
 }

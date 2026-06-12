@@ -16,6 +16,7 @@ class FallingObject extends GameObject {
     draw() {
         this.context.fillStyle = FALLING_OBJECT_COLOR;
         this.context.beginPath();
+        //this.context.fillRect(this.x, this.y, this.width, this.height);
         this.context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
         this.context.fill();
 
@@ -27,6 +28,14 @@ class FallingObject extends GameObject {
 
     isOffScreen(boardHeight) {
         // TODO: Return true when the object is below the canvas.
+        if (this.y > (boardHeight - this.height*2)) {
+            return true;
+        }
         return false;
     }
 }
+
+
+
+
+
