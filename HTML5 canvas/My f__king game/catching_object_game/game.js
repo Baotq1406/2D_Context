@@ -109,9 +109,13 @@ class Game {
 
         // TODO: Spawn falling objects and obstacles.
         // Hint: call this.spawnItems(secondsPassed).
+        this.spawnItems(secondsPassed);
 
         // TODO: Update falling objects and obstacles.
         // Hint: loop over this.fallingObjects and this.obstacles.
+        for (let fallingObject of this.fallingObjects) {
+            fallingObject.update(secondsPassed);
+        }
 
         // TODO: Check if catcher touches a falling object.
         // If yes, increase score and remove that object.
@@ -137,13 +141,24 @@ class Game {
         // TODO: Randomly create either a FallingObject or an Obstacle.
         // Helpful values:
         // let x = Math.random() * (this.width - 40);
-        // let shouldSpawnObstacle = Math.random() < 0.3;
-        //
-        // Falling object example:
-        // this.fallingObjects.push(new FallingObject(this.context, x, -32, 32, FALL_SPEED));
-        //
-        // Obstacle example:
-        // this.obstacles.push(new Obstacle(this.context, x, -36, 44, 28, OBSTACLE_SPEED));
+        let shouldSpawnObstacle = Math.random() < 0.3;
+
+        let cols = 19;
+        let colWidth = this.width / cols;
+        let randomCol = Math.floor(Math.random() * cols);
+        let x = randomCol * colWidth + (colWidth - 32) / 2;
+
+        //test
+        //let x = 18 * colWidth + (colWidth - 32) / 2;
+        //let x = 0 * colWidth + (colWidth - 32) / 2;
+
+        if (shouldSpawnObstacle) {
+            // Obstacle example:
+            // this.obstacles.push(new Obstacle(this.context, x, -36, 44, 28, OBSTACLE_SPEED));
+        } else {
+            // Falling object example:
+            this.fallingObjects.push(new FallingObject(this.context, x, -32, 32, FALL_SPEED));       
+        }
     }
 
     start() {

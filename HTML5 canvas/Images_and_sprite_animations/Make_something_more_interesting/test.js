@@ -109,15 +109,15 @@ class Circle extends GameObject {
         // Draw the image
         // bo offset
         // this.context.drawImage(
-        //     Circle.sprite, 
-        //     column * Circle.frameWidth, 
-        //     row * Circle.frameHeight, 
-        //     Circle.frameWidth, 
-        //     Circle.frameHeight, 
-        //     (this.x - this.radius), 
-        //     (this.y - this.radius), 
-        //     this.radius * 2, 
-        //     this.radius * 2.42
+        //     Circle.sprite, // image
+        //     column * Circle.frameWidth, // source x 
+        //     row * Circle.frameHeight, // source y
+        //     Circle.frameWidth, // source width
+        //     Circle.frameHeight, // source height
+        //     (this.x - this.radius), // destination x
+        //     (this.y - this.radius), // destination y
+        //     this.radius * 2, // destination width
+        //     this.radius * 2.42 // destination height
         // );
 
         //có offset
