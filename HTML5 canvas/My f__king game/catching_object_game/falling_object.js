@@ -33,6 +33,8 @@ class FallingObject extends GameObject {
         }
         return false;
     }
+
+    
 }
 
 

@@ -18,6 +18,7 @@ const FLOOR_COLOR = "#1e293b";
 const CATCHER_WIDTH = 110;
 const CATCHER_HEIGHT = 28;
 const START_LIVES = 3;
+const MAX_LIVES = 3;
 const FALL_SPEED = 180;
 const OBSTACLE_SPEED = 220;
 
@@ -40,6 +41,7 @@ class Game {
         this.fallingObjects = [];
         this.obstacles = [];
         this.star = [];
+        this.healingObjects = [];
 
         this.createActors();
         this.listenForPlayerInput();
@@ -127,6 +129,16 @@ class Game {
             star.update(secondsPassed);
         }
 
+        for (let healingObject of this.healingObjects) {
+            healingObject.update(secondsPassed);
+
+            healingObject.offScreen(this.height);
+
+            if (healingObject.isTouching(this.catcher)) {
+                healingObject.onCatch(this);
+            }
+        }   
+
         this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
             if (this.detectCollision(this.catcher, fallingObject)) {
                 this.score++;
@@ -142,6 +154,17 @@ class Game {
             }
             return true;
         });
+
+        // this.healingObjects = this.healingObjects.filter((healingObject) => {
+        //     if (this.detectCollision(this.catcher, healingObject)) {
+        //         this.lives++;
+        //         if (this.lives > MAX_LIVES) {
+        //             this.lives = MAX_LIVES;
+        //         }
+        //         return false;
+        //     }
+        //     return true;
+        // });
 
         // TODO: Check if catcher touches an obstacle.
         // If yes, lose a life and remove that obstacle.
@@ -184,7 +207,16 @@ class Game {
             return true;
         });
 
+        // this.healingObjects = this.healingObjects.filter((healingObject) => {
+        //     if (healingObject.isOffScreen(this.height)) {
+        //         return false;
+        //     }
+        //     return true;
+        // });
+
         // TODO: If lives is 0, set gameOver and show restart UI.
+
+        this.cleanUpDestroyedObjects();
     }
 
     spawnItems(secondsPassed) {
@@ -216,9 +248,14 @@ class Game {
             this.obstacles.push(new Obstacle(this.context, xObstacleObj, -36, 44, 28, OBSTACLE_SPEED));
         } else {
             // Falling object example:
-            let shouldSpawnStar = Math.random() < 0.5;
-            if (shouldSpawnStar) {
-                this.star.push(new Star(this.context, xFallingObj, -32, 32, FALL_SPEED));
+            let shouldSpawnObjSpecal = Math.random() < 0.5;
+            if (shouldSpawnObjSpecal) {
+                let randomItem = Math.floor(Math.random() * 2);
+                if (randomItem === 0) {
+                    this.star.push(new Star(this.context, xFallingObj, -32, 32, FALL_SPEED));
+                } else {
+                    this.healingObjects.push(new HealingObj(this.context, xFallingObj, -32, 32, FALL_SPEED));
+                }
             } else {
                 this.fallingObjects.push(new FallingObject(this.context, xFallingObj, -32, 32, FALL_SPEED));
             }
@@ -241,6 +278,7 @@ class Game {
         this.fallingObjects = [];
         this.obstacles = [];
         this.star = [];
+        this.healingObjects = [];
         this.createActors();
         this.oldTimeStamp = performance.now();
         this.ui.hideMessage();
@@ -262,6 +300,7 @@ class Game {
         this.fallingObjects.forEach((fallingObject) => fallingObject.draw());
         this.obstacles.forEach((obstacle) => obstacle.draw());
         this.star.forEach((star) => star.draw());
+        this.healingObjects.forEach((healingObject) => healingObject.draw());
         this.catcher.draw();
         this.ui.updateGameInfo(this.score, this.lives);
     }
@@ -287,6 +326,10 @@ class Game {
         let rect = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / rect.width;
         return (clientX - rect.left) * scaleX;
+    }
+
+    cleanUpDestroyedObjects() {
+        this.healingObjects = this.healingObjects.filter((obj) => !obj.isDestroyed());
     }
 
     detectCollision(obj1, obj2) {
