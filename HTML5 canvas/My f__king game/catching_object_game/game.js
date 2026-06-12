@@ -127,12 +127,18 @@ class Game {
             star.update(secondsPassed);
         }
 
-        // TODO: Check if catcher touches a falling object.
-        // If yes, increase score and remove that object.
         this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
             if (this.detectCollision(this.catcher, fallingObject)) {
                 this.score++;
-                return false; 
+                return false;
+            }
+            return true;
+        });
+
+        this.star = this.star.filter((star) => {
+            if (this.detectCollision(this.catcher, star)) {
+                this.score += 5;
+                return false;
             }
             return true;
         });
@@ -159,6 +165,13 @@ class Game {
                 if (this.lives <= 0) {
                     this.showGameOver();
                 }
+                return false;
+            }
+            return true;
+        });
+
+        this.star = this.star.filter((star) => {
+            if (star.isOffScreen(this.height)) {
                 return false;
             }
             return true;
@@ -227,6 +240,7 @@ class Game {
         this.spawnTimer = 0;
         this.fallingObjects = [];
         this.obstacles = [];
+        this.star = [];
         this.createActors();
         this.oldTimeStamp = performance.now();
         this.ui.hideMessage();
@@ -247,6 +261,7 @@ class Game {
         this.drawBackground();
         this.fallingObjects.forEach((fallingObject) => fallingObject.draw());
         this.obstacles.forEach((obstacle) => obstacle.draw());
+        this.star.forEach((star) => star.draw());
         this.catcher.draw();
         this.ui.updateGameInfo(this.score, this.lives);
     }

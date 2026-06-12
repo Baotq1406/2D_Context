@@ -1,46 +1,52 @@
 let starImage = document.getElementById("starImage");
-
-let numRows = 1;
-let numCols = 13;
-
-let frameWidth = starImage.width / numCols;
-let frameHeight = starImage.height / numRows;
+const numRows = 1;
+const numCols = 13;
 
 class Star extends GameObject {
     constructor(context, x, y, size, speed) {
-        super(context, x, y, size, speed);
+        super(context, x, y, size, size, 0, speed);
 
         this.currentFrame = 0;
         this.animationTimer = 0;
-        this.frameDuration = 0.1; // 100ms
+        this.frameDuration = 0.1;
+
+        // Đổi frame mỗi 100ms
+        // this.intervalId = setInterval(() => {
+        //     this.currentFrame++;
+
+        //     if (this.currentFrame >= NUM_ROWS * NUM_COLS) {
+        //         this.currentFrame = 0;
+        //     }
+        // }, 100)
     }
     
     update(secondsPassed) {
         super.update(secondsPassed);
 
-        // Animation
         this.animationTimer += secondsPassed;
 
         if (this.animationTimer >= this.frameDuration) {
             this.currentFrame++;
             this.animationTimer = 0;
 
-            const maxFrame = numCols * numRows - 1;
-
-            if (this.currentFrame > maxFrame) {
+            if (this.currentFrame > numCols * numRows - 1) {
                 this.currentFrame = 0;
             }
         }
     }
 
     draw() {
-        const col = this.currentFrame % numCols;
-        const row = Math.floor(this.currentFrame / numCols);
+        if (!starImage.complete) return;
+
+        const frameWidth = starImage.width / numCols;
+        const frameHeight = starImage.height / numRows;
+        const colIndex = this.currentFrame % numCols;
+        const rowIndex = Math.floor(this.currentFrame / numCols);
 
         this.context.drawImage(
             starImage,
-            col * frameWidth,
-            row * frameHeight,
+            colIndex * frameWidth,
+            rowIndex * frameHeight,
             frameWidth,
             frameHeight,
             this.x,
