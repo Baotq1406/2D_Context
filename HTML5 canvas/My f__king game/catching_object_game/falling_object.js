@@ -4,7 +4,9 @@ const FALLING_OBJECT_DARK_COLOR = "#ca8a04";
 class FallingObject extends GameObject {
     constructor(context, x, y, size, speed) {
         super(context, x, y, size, size, 0, speed);
-        this.caught = false;
+        //this.caught = false;
+
+        this.scoreValue = 1;
     }
 
     update(secondsPassed) {
@@ -26,15 +28,25 @@ class FallingObject extends GameObject {
         this.context.fill();
     }
 
-    isOffScreen(boardHeight) {
-        // TODO: Return true when the object is below the canvas.
-        if (this.y > (boardHeight - this.height*2)) {
-            return true;
+    // isOffScreen(boardHeight) {
+    //     // TODO: Return true when the object is below the canvas.
+    //     if (this.y > (boardHeight - this.height*2)) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    offScreen(boardHeight, game) {
+        if (this.y > boardHeight - this.height * 2) {
+            game.lives--;
+            this.destroy();
         }
-        return false;
     }
 
-    
+    addScore(game) {
+        game.score += this.scoreValue;
+        this.destroy();
+    }
 }
 
 

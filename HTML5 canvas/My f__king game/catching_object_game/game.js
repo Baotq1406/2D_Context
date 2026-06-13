@@ -116,19 +116,40 @@ class Game {
 
         // TODO: Update falling objects and obstacles.
         // Hint: loop over this.fallingObjects and this.obstacles.
-
+        //Falling object 
         for (let fallingObject of this.fallingObjects) {
             fallingObject.update(secondsPassed);
+
+            fallingObject.offScreen(this.height, this);
+
+            if (fallingObject.isTouching(this.catcher)) {
+                fallingObject.addScore(this);
+            }
         }
 
+        //Obstacle
         for (let obstacle of this.obstacles) {
             obstacle.update(secondsPassed);
+
+            obstacle.offScreen(this.height, this);
+
+            if (obstacle.isTouching(this.catcher)) {
+                obstacle.onCatch(this);
+            }
         }
 
+        //Star
         for (let star of this.star) {
             star.update(secondsPassed);
+
+            star.offScreen(this.height);
+
+            if (star.isTouching(this.catcher)) {
+                star.addScore(this);
+            }         
         }
 
+        //Healing object
         for (let healingObject of this.healingObjects) {
             healingObject.update(secondsPassed);
 
@@ -139,21 +160,26 @@ class Game {
             }
         }   
 
-        this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
-            if (this.detectCollision(this.catcher, fallingObject)) {
-                this.score++;
-                return false;
-            }
-            return true;
-        });
+        //Player death
+        if (this.lives <= 0) {
+            this.showGameOver();
+        }
 
-        this.star = this.star.filter((star) => {
-            if (this.detectCollision(this.catcher, star)) {
-                this.score += 5;
-                return false;
-            }
-            return true;
-        });
+        // this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
+        //     if (this.detectCollision(this.catcher, fallingObject)) {
+        //         this.score++;
+        //         return false;
+        //     }
+        //     return true;
+        // });
+
+        // this.star = this.star.filter((star) => {
+        //     if (this.detectCollision(this.catcher, star)) {
+        //         this.score += 5;
+        //         return false;
+        //     }
+        //     return true;
+        // });
 
         // this.healingObjects = this.healingObjects.filter((healingObject) => {
         //     if (this.detectCollision(this.catcher, healingObject)) {
@@ -168,44 +194,44 @@ class Game {
 
         // TODO: Check if catcher touches an obstacle.
         // If yes, lose a life and remove that obstacle.
-        this.obstacles = this.obstacles.filter((obstacle) => {
-            if (this.detectCollision(this.catcher, obstacle)) {
-                this.lives--;
-                if (this.lives <= 0) {
-                    this.showGameOver();
-                }
-                return false;
-            }
-            return true;
-        });
+        // this.obstacles = this.obstacles.filter((obstacle) => {
+        //     if (this.detectCollision(this.catcher, obstacle)) {
+        //         this.lives--;
+        //         if (this.lives <= 0) {
+        //             this.showGameOver();
+        //         }
+        //         return false;
+        //     }
+        //     return true;
+        // });
 
         // TODO: Remove items that leave the screen.
         // If a falling object reaches the bottom, lose a life.
         // Hint: use the isOffScreen method of the objects.
-        this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
-            if (fallingObject.isOffScreen(this.height)) {
-                this.lives--;
-                if (this.lives <= 0) {
-                    this.showGameOver();
-                }
-                return false;
-            }
-            return true;
-        });
+        // this.fallingObjects = this.fallingObjects.filter((fallingObject) => {
+        //     if (fallingObject.isOffScreen(this.height)) {
+        //         this.lives--;
+        //         if (this.lives <= 0) {
+        //             this.showGameOver();
+        //         }
+        //         return false;
+        //     }
+        //     return true;
+        // });
 
-        this.star = this.star.filter((star) => {
-            if (star.isOffScreen(this.height)) {
-                return false;
-            }
-            return true;
-        });
+        // this.star = this.star.filter((star) => {
+        //     if (star.isOffScreen(this.height)) {
+        //         return false;
+        //     }
+        //     return true;
+        // });
 
-        this.obstacles = this.obstacles.filter((obstacle) => {
-            if (obstacle.isOffScreen(this.height)) {
-                return false;
-            }
-            return true;
-        });
+        // this.obstacles = this.obstacles.filter((obstacle) => {
+        //     if (obstacle.isOffScreen(this.height)) {
+        //         return false;
+        //     }
+        //     return true;
+        // });
 
         // this.healingObjects = this.healingObjects.filter((healingObject) => {
         //     if (healingObject.isOffScreen(this.height)) {
@@ -329,13 +355,16 @@ class Game {
     }
 
     cleanUpDestroyedObjects() {
+        this.fallingObjects = this.fallingObjects.filter((obj) => !obj.isDestroyed());
+        this.obstacles = this.obstacles.filter((obj) => !obj.isDestroyed());
         this.healingObjects = this.healingObjects.filter((obj) => !obj.isDestroyed());
+        this.star = this.star.filter((obj) => !obj.isDestroyed());
     }
 
-    detectCollision(obj1, obj2) {
-        if (obj2.x > obj1.x + obj1.width || obj1.x > obj2.x + obj2.width || obj2.y > obj1.y + obj1.height || obj1.y > obj2.y + obj2.height) {
-            return false;
-        }
-        return true;
-    }
+    // detectCollision(obj1, obj2) {
+    //     if (obj2.x > obj1.x + obj1.width || obj1.x > obj2.x + obj2.width || obj2.y > obj1.y + obj1.height || obj1.y > obj2.y + obj2.height) {
+    //         return false;
+    //     }
+    //     return true;
+    // }
 }

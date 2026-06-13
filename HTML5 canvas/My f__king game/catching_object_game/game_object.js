@@ -7,15 +7,15 @@ class GameObject {
         this.height = height;
         this.vx = vx;
         this.vy = vy;
-        this._destroyed = false;
+        this.destroyed = false;
     }
 
     destroy() {
-        this._destroyed = true;
+        this.destroyed = true;
     }
 
     isDestroyed() {
-        return this._destroyed;
+        return this.destroyed;
     }
 
     update(secondsPassed = 1) {

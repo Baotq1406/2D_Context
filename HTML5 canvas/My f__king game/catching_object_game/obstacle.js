@@ -22,11 +22,22 @@ class Obstacle extends GameObject {
         this.context.fillRect(this.x + 6, this.y + 6, this.width - 12, 5);
     }
 
-    isOffScreen(boardHeight) {
-        // TODO: Return true when the obstacle is below the canvas.
-        if (this.y > (boardHeight - this.height*2)) {
-            return true;
+    // isOffScreen(boardHeight) {
+    //     // TODO: Return true when the obstacle is below the canvas.
+    //     if (this.y > (boardHeight - this.height*2)) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    offScreen(boardHeight, game) {
+        if (this.y > boardHeight - this.height * 2) {
+            this.destroy();
         }
-        return false;
+    }
+
+    onCatch(game) {
+        game.lives--;
+        this.destroy();
     }
 }

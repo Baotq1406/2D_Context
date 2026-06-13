@@ -7,6 +7,8 @@ class Star extends GameObject {
     constructor(context, x, y, size, speed) {
         super(context, x, y, size, size, 0, speed);
 
+        this.scoreValue = 5; 
+
         this.currentFrame = 0;
         this.animationTimer = 0;
         this.frameDuration = 0.1;
@@ -55,10 +57,21 @@ class Star extends GameObject {
         );
     }
 
-    isOffScreen(boardHeight) {
+    // isOffScreen(boardHeight) {
+    //     if (this.y > boardHeight - this.height * 2) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    offScreen(boardHeight) {
         if (this.y > boardHeight - this.height * 2) {
-            return true;
+            this.destroy();
         }
-        return false;
+    }
+
+    addScore(game) {
+        game.score += this.scoreValue;
+        this.destroy();
     }
 }
