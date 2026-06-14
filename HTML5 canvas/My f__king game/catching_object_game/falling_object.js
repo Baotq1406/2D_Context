@@ -45,6 +45,7 @@ class FallingObject extends GameObject {
 
     addScore(game) {
         game.score += this.scoreValue;
+        game.tempPoint += this.scoreValue;
         this.destroy();
     }
 }

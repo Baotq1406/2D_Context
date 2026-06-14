@@ -19,8 +19,14 @@ const CATCHER_WIDTH = 110;
 const CATCHER_HEIGHT = 28;
 const START_LIVES = 3;
 const MAX_LIVES = 3;
-const FALL_SPEED = 180;
-const OBSTACLE_SPEED = 220;
+const MAX_SPEED = 1200;
+const UPGRADE_VELOCITY = 50;
+const ACHIEVEMENT_SCORE = 20;
+
+let FALL_SPEED = 150;
+let OBSTACLE_SPEED = 200;
+let numObstacles = 1;
+
 
 class Game {
     constructor(canvas) {
@@ -31,6 +37,7 @@ class Game {
         this.ui = new GameUI(canvas);
 
         this.score = 0;
+        this.tempPoint = 0;
         this.lives = START_LIVES;
         this.run = false;
         this.gameOver = false;
@@ -146,7 +153,7 @@ class Game {
 
             if (star.isTouching(this.catcher)) {
                 star.addScore(this);
-            }         
+            }
         }
 
         //Healing object
@@ -158,7 +165,16 @@ class Game {
             if (healingObject.isTouching(this.catcher)) {
                 healingObject.onCatch(this);
             }
-        }   
+        }
+
+        this.upgradeDifficulty();
+        //console.log(this.tempPoint);
+        // if (this.tempPoint >= ACHIEVEMENT_SCORE) {
+        //     FALL_SPEED = Math.min(FALL_SPEED + UPGRADE_VELOCITY, MAX_SPEED);
+        //     OBSTACLE_SPEED = Math.min(OBSTACLE_SPEED + UPGRADE_VELOCITY, MAX_SPEED);
+        //     //console.log("Upgrade! FALL_SPEED: ", FALL_SPEED, ", OBSTACLE_SPEED: ", OBSTACLE_SPEED);
+        //     this.tempPoint = 0;
+        // }
 
         //Player death
         if (this.lives <= 0) {
@@ -263,28 +279,76 @@ class Game {
         let colWidth = this.width / cols;
         let randomCol = Math.floor(Math.random() * cols);
         let xFallingObj = randomCol * colWidth + (colWidth - 32) / 2;
-        let xObstacleObj = randomCol * colWidth + (colWidth - 44) / 2;
+        //let xObstacleObj = randomCol * colWidth + (colWidth - 44) / 2;
 
         //test
         //let x = 18 * colWidth + (colWidth - 32) / 2;
         //let x = 0 * colWidth + (colWidth - 32) / 2;
+        let testSpeed = 800;
 
+        // if (shouldSpawnObstacle) {
+        //     // Obstacle example:
+        //     this.obstacles.push(new Obstacle(this.context, xObstacleObj, -36, 44, 28, testSpeed));
+        // } else {
+        //     // Falling object example:
+        //     let shouldSpawnObjSpecal = Math.random() < 0.5;
+        //     if (shouldSpawnObjSpecal) {
+        //         let randomItem = Math.floor(Math.random() * 2);
+        //         if (randomItem === 0) {
+        //             this.star.push(new Star(this.context, xFallingObj, -32, 32, FALL_SPEED));
+        //         } else {
+        //             this.healingObjects.push(new HealingObj(this.context, xFallingObj, -32, 32, FALL_SPEED));
+        //         }
+        //     } else {
+        //         this.fallingObjects.push(new FallingObject(this.context, xFallingObj, -32, 32, FALL_SPEED));
+        //     }
+        // }
+
+
+        // Return first 
         if (shouldSpawnObstacle) {
-            // Obstacle example:
-            this.obstacles.push(new Obstacle(this.context, xObstacleObj, -36, 44, 28, OBSTACLE_SPEED));
-        } else {
-            // Falling object example:
-            let shouldSpawnObjSpecal = Math.random() < 0.5;
-            if (shouldSpawnObjSpecal) {
-                let randomItem = Math.floor(Math.random() * 2);
-                if (randomItem === 0) {
-                    this.star.push(new Star(this.context, xFallingObj, -32, 32, FALL_SPEED));
-                } else {
-                    this.healingObjects.push(new HealingObj(this.context, xFallingObj, -32, 32, FALL_SPEED));
-                }
-            } else {
-                this.fallingObjects.push(new FallingObject(this.context, xFallingObj, -32, 32, FALL_SPEED));
+            // for (let i = 0; i < numObstacles; i++) {
+            //     let randomCol = Math.floor(Math.random() * cols);
+            //     let xObstacleObj = randomCol * colWidth + (colWidth - 44) / 2;
+            //     this.obstacles.push(new Obstacle(this.context, xObstacleObj, -36, 44, 28, OBSTACLE_SPEED));
+            // }
+            //this.obstacles.push(new Obstacle(this.context, xObstacleObj, -36, 44, 28, OBSTACLE_SPEED));
+
+
+            // Set là một tập hợp chỉ chứa các giá trị không trùng nhau
+            const usedCols = new Set();
+
+            for (let i = 0; i < numObstacles; i++) {
+
+                let randomCol;
+
+                do {
+                    randomCol = Math.floor(Math.random() * cols);
+                } while (usedCols.has(randomCol));
+
+                usedCols.add(randomCol);
+
+                let xObstacleObj = randomCol * colWidth + (colWidth - 44) / 2;
+
+                this.obstacles.push(
+                    new Obstacle(this.context, xObstacleObj, -36, 44, 28, OBSTACLE_SPEED)
+                );
             }
+
+            return;
+        }
+
+        const shouldSpawnSpecial = Math.random() < 0.5;
+
+        if (!shouldSpawnSpecial) {
+            this.fallingObjects.push(new FallingObject(this.context, xFallingObj, -32, 32, FALL_SPEED));
+            return;
+        }
+
+        if (Math.random() < 0.5) {
+            this.star.push(new Star(this.context, xFallingObj, -32, 32, FALL_SPEED));
+        } else {
+            this.healingObjects.push(new HealingObj(this.context, xFallingObj, -32, 32, FALL_SPEED));
         }
     }
 
@@ -360,6 +424,37 @@ class Game {
         this.healingObjects = this.healingObjects.filter((obj) => !obj.isDestroyed());
         this.star = this.star.filter((obj) => !obj.isDestroyed());
     }
+
+    upgradeDifficulty() {
+        //console.log(this.tempPoint);
+        if (this.score > 50) {
+            //numObstacles = 2;
+            numObstacles = Math.floor(Math.random() * 2) + 1;
+        }
+
+        if (this.score > 100) {
+            //numObstacles = 3;
+            numObstacles = Math.floor(Math.random() * 2) + 2;
+        }
+
+        if (this.score > 150) {
+            numObstacles = Math.floor(Math.random() * 3) + 2; 
+        }
+
+        if (this.score > 200) {
+            numObstacles = Math.floor(Math.random() * 3) + 3; 
+        }
+
+        if (this.tempPoint < ACHIEVEMENT_SCORE) {
+            return;
+        }
+
+        FALL_SPEED = Math.min(FALL_SPEED + UPGRADE_VELOCITY, MAX_SPEED);
+        OBSTACLE_SPEED = Math.min(OBSTACLE_SPEED + UPGRADE_VELOCITY, MAX_SPEED);
+        //console.log("Upgrade! FALL_SPEED: ", FALL_SPEED, ", OBSTACLE_SPEED: ", OBSTACLE_SPEED);
+        this.tempPoint = 0;
+    }
+
 
     // detectCollision(obj1, obj2) {
     //     if (obj2.x > obj1.x + obj1.width || obj1.x > obj2.x + obj2.width || obj2.y > obj1.y + obj1.height || obj1.y > obj2.y + obj2.height) {

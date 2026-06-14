@@ -72,6 +72,7 @@ class Star extends GameObject {
 
     addScore(game) {
         game.score += this.scoreValue;
+        game.tempPoint += this.scoreValue;
         this.destroy();
     }
 }
